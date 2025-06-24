@@ -1,7 +1,5 @@
-Requirements:
-
-- streamlit
-- requests
-- pandas
-- plotly
-- matplotlib
+streamlit
+pandas
+requests
+plotly
+matplotlib
