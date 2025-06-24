@@ -1,0 +1,6 @@
+index=splunk_guard sourcetype=usb_logs
+| rex field=_raw "^(?<device_id>[^,]+),(?<bytes_written>\d+),(?<timestamp>.+)$"
+| eval bytes_written=tonumber(bytes_written)
+| apply usb_anomaly_model
+| where isOutlier=1
+| table device_id, bytes_written, timestamp

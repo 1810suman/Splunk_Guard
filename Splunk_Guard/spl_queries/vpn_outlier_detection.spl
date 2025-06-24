@@ -1,0 +1,5 @@
+index=vpn sourcetype=vpn
+| fields username geo_distance_from_home
+| apply vpn_anomaly_model
+| where isOutlier=1
+| table username, geo_distance_from_home

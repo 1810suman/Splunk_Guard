@@ -1,0 +1,4 @@
+index=vpn sourcetype=vpn
+| fields username geo_distance_from_home
+| where isnotnull(geo_distance_from_home) AND geo_distance_from_home > 0
+| fit DensityFunction geo_distance_from_home by username threshold=0.001 into vpn_anomaly_model

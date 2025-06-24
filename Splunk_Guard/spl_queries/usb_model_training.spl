@@ -1,0 +1,5 @@
+index=splunk_guard sourcetype=usb_logs
+| rex field=_raw "^(?<device_id>[^,]+),(?<bytes_written>\d+),(?<timestamp>.+)$"
+| eval bytes_written=tonumber(bytes_written)
+| where isnotnull(bytes_written) AND bytes_written > 0
+| fit DensityFunction bytes_written by device_id threshold=0.01 into usb_anomaly_model

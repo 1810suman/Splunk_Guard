@@ -1,0 +1,16 @@
+// json
+{
+  "title": "VPN Anomaly Monitor",
+  "visualizations": [
+    {
+      "type": "splunk.line",
+      "title": "Geo Distance from Home (VPN)",
+      "dataSources": { "primary": "vpn_anomaly_search" }
+    },
+    {
+      "type": "splunk.table",
+      "title": "Detected VPN Anomalies",
+      "dataSources": { "primary": "vpn_anomaly_search" }
+    }
+  ]
+}

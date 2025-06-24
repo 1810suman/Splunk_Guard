@@ -1,0 +1,16 @@
+// json
+{
+  "title": "USB Anomaly Monitor",
+  "visualizations": [
+    {
+      "type": "splunk.line",
+      "title": "USB Write Volume Over Time",
+      "dataSources": { "primary": "usb_anomaly_search" }
+    },
+    {
+      "type": "splunk.table",
+      "title": "Detected USB Anomalies",
+      "dataSources": { "primary": "usb_anomaly_search" }
+    }
+  ]
+}
