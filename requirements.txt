@@ -1,0 +1,7 @@
+Requirements:
+
+- streamlit
+- requests
+- pandas
+- plotly
+- matplotlib
