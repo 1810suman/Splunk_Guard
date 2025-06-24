@@ -5,9 +5,9 @@ import plotly.express as px
 from requests.auth import HTTPBasicAuth
 
 # ---- SPLUNK CONFIGURATION ----
-SPLUNK_HOST = "https://localhost:8089"   # Replace with your Splunk Management Port
-USERNAME = "your_username"                   # Your Splunk username
-PASSWORD = "your_password"                   # Your Splunk password
+SPLUNK_HOST = st.secrets["splunk_host"]   
+USERNAME = st.secrets["splunk_username"]
+PASSWORD = st.secrets["splunk_password"]
 
 # Disable SSL Warnings for self-signed certs
 requests.packages.urllib3.disable_warnings()
@@ -16,11 +16,7 @@ requests.packages.urllib3.disable_warnings()
 def splunk_search(query):
     search_url = f"{SPLUNK_HOST}/services/search/jobs"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    payload = {
-        "search": f"search {query}",
-        "exec_mode": "blocking",
-        "output_mode": "json"
-    }
+    payload = {"search": f"search {query}", "exec_mode": "blocking", "output_mode": "json"}
 
     response = requests.post(search_url, auth=HTTPBasicAuth(USERNAME, PASSWORD),
                              headers=headers, data=payload, verify=False)
@@ -41,18 +37,17 @@ def splunk_search(query):
     rows = result.json().get("results", [])
     return pd.DataFrame(rows)
 
-# ---- Streamlit Dashboard ----
+# ---- Streamlit UI ----
 st.set_page_config(page_title="Splunk-Guard Threat Monitor", layout="wide")
-st.title("🔐 Splunk-Guard: Real-Time Threat Monitoring Dashboard")
+st.title("🔐 Splunk-Guard: Real-Time Threat Monitoring")
 
-# ---- Data Selection ----
-st.sidebar.header("Select Data Type to Analyze")
-data_choice = st.sidebar.selectbox("Choose Data Type", ["USB Data", "VPN Data"])
+# ---- Sidebar ----
+st.sidebar.header("Data Type Selection")
+data_choice = st.sidebar.radio("View Data for:", ["USB Logs", "VPN Logs"])
 
-# ---- USB Data Section ----
-if data_choice == "USB Data":
+# ---- USB Section ----
+if data_choice == "USB Logs":
     st.header("📊 USB Write Volume Over Time")
-
     usb_data = splunk_search(
         r'index=splunk_guard sourcetype=usb_logs '
         r'| rex field=_raw "^(?<device_id>[^,]+),(?<bytes_written>\d+),(?<timestamp>.+)$" '
@@ -63,38 +58,30 @@ if data_choice == "USB Data":
     if not usb_data.empty:
         usb_data["time"] = pd.to_datetime(usb_data["_time"])
         fig = px.line(usb_data, x="time", y="total_written",
-                      title="Hourly USB Write Volume", markers=True)
+                      title="USB Write Volume (Hourly)", markers=True)
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.warning("No USB data available or Splunk query returned empty results.")
+        st.warning("No USB data available or query returned no results.")
 
-# ---- VPN Data Section ----
-if data_choice == "VPN Data":
-    st.header("🌍 VPN Login Distribution")
+# ---- VPN Section ----
+elif data_choice == "VPN Logs":
+    st.header("🌍 VPN Logins Overview")
 
-    # Pie Chart by Country
-    vpn_country_data = splunk_search(
-        r'index=vpn sourcetype=vpn | stats count by country'
-    )
-    if not vpn_country_data.empty:
-        fig = px.pie(vpn_country_data, names='country', values='count',
-                     title="VPN Logins by Country")
+    vpn_country = splunk_search(r'index=vpn sourcetype=vpn | stats count by country')
+    if not vpn_country.empty:
+        fig = px.pie(vpn_country, names='country', values='count', title="VPN Logins by Country")
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("No VPN country data available.")
 
-    # Bar Chart by Username
     st.subheader("👤 VPN Logins by Username")
-
-    vpn_user_data = splunk_search(
-        r'index=vpn sourcetype=vpn | stats count by username'
-    )
-    if not vpn_user_data.empty:
-        fig = px.bar(vpn_user_data, x='username', y='count',
-                     title="VPN Logins by User", color='count')
+    vpn_user = splunk_search(r'index=vpn sourcetype=vpn | stats count by username')
+    if not vpn_user.empty:
+        fig = px.bar(vpn_user, x='username', y='count', color='count',
+                     title="VPN Logins by User")
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("No VPN login data available.")
 
-# ---- Footer ----
-st.info("⚡ This dashboard fetches live threat monitoring data from Splunk via REST API.")
+st.info("⚡ Powered by Splunk REST API | Real-time Threat Visibility")
+
