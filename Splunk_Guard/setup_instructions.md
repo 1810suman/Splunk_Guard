@@ -1,4 +1,4 @@
-# setup_instructions.md
+# Setup Instructions
 
 ## Requirements
 - Splunk Enterprise (Free Tier acceptable)
