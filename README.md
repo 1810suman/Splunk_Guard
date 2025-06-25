@@ -3,7 +3,7 @@
 <p><strong>Splunk-Guard</strong> is a lightweight, ML-driven threat detection system built entirely with Splunk's free tools and the Machine Learning Toolkit (MLTK). It demonstrates how to monitor USB and VPN activities for anomalies without costly security platforms.</p>
 
 <p>▶️ <strong>Watch Demo:</strong> <a href="https://www.youtube.com/watch?v=B4yl0_dWzko" target="_blank">YouTube Demo Video</a></p>
-<p>🌐 <strong>Try Live App:</strong> <a href="https://splunkguard-kmzqnlsegnwukfn75u9vle.streamlit.app/" target="_blank">Splunk-Guard Web Dashboard</a></p>
+<p>🌐 <strong>Try Live App:</strong> <a href="https://splunkguard-jhwvq3nyktjevytf7tjjye.streamlit.app/"target="_blank">Splunk-Guard Web Dashboard</a></p>
 
 <hr>
 
